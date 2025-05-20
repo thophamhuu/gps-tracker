@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lấy vị trí GPS</title>
+</head>
+<body>
+  <h2>Đang lấy vị trí của bạn...</h2>
+  <p id="status">Vui lòng cho phép truy cập vị trí.</p>
+
+  <script>
+    function sendLocation(position) {
+      const data = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+        timestamp: new Date().toISOString()
+      };
+
+      document.getElementById("status").textContent = "Đã lấy được vị trí. Đang gửi...";
+
+      fetch("https://autoflow.aaaerp.vn/webhook/gps-tracker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        document.getElementById("status").textContent = "Gửi thành công! Cảm ơn bạn.";
+      })
+      .catch(() => {
+        document.getElementById("status").textContent = "Lỗi khi gửi dữ liệu.";
+      });
+    }
+
+    function showError(error) {
+      document.getElementById("status").textContent = "Không thể lấy vị trí: " + error.message;
+    }
+
+    navigator.geolocation.getCurrentPosition(sendLocation, showError);
+  </script>
+</body>
+</html>
